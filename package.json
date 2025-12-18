@@ -1,0 +1,33 @@
+{
+  "name": "chat",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx migrate.ts"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "yarn@1.22.22",
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "prettier": "^3.2.5",
+    "turbo": "^2.4.4",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "better-auth": "^1.4.7",
+    "drizzle-kit": "^0.31.8",
+    "drizzle-orm": "^0.45.0",
+    "zod": "3.25.76"
+  }
+}
