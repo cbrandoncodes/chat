@@ -25,7 +25,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { updateUserAction } from "@/lib/actions/user";
+import { updateUserAction } from "@/lib/actions/users";
 import { SelectUser } from "@shared/drizzle/schema";
 
 type UserProfileDialogProps = {

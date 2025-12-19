@@ -6,6 +6,9 @@ import {
   uuid,
   boolean,
   index,
+  pgEnum,
+  primaryKey,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 // better-auth
@@ -16,6 +19,7 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  isOnline: boolean("is_online").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -105,11 +109,83 @@ export const accountRelations = relations(account, ({ one }) => ({
 const id = uuid("id")
   .primaryKey()
   .default(sql`gen_random_uuid()`);
-const createdAt = timestamp("created_at").notNull().defaultNow();
-const modifiedAt = timestamp("modified_at")
+const createdAt = timestamp("created_at", { withTimezone: true })
+  .notNull()
+  .defaultNow();
+const modifiedAt = timestamp("modified_at", { withTimezone: true })
   .notNull()
   .defaultNow()
   .$onUpdateFn(() => sql`now()`);
 
+export const chats = pgTable("chats", {
+  id,
+  unread: jsonb("unread").$type<string[]>().notNull().default([]),
+  excerpt: text("excerpt").notNull(),
+  createdAt,
+  modifiedAt,
+});
+
+export const chatMessages = pgTable("chat_messages", {
+  id,
+  createdAt,
+  modifiedAt,
+  content: text("content").notNull(),
+  chatId: uuid("chat_id")
+    .notNull()
+    .references(() => chats.id, { onDelete: "cascade" }),
+  senderId: text("sender_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const chatRelations = relations(chats, ({ many }) => ({
+  messages: many(chatMessages),
+  participants: many(chatsToUsers),
+}));
+
+export const chatMessageRelations = relations(chatMessages, ({ one }) => ({
+  chat: one(chats, {
+    fields: [chatMessages.chatId],
+    references: [chats.id],
+  }),
+}));
+
+export const chatsToUsers = pgTable(
+  "chats_to_users",
+  {
+    chatId: uuid("chat_id")
+      .notNull()
+      .references(() => chats.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt,
+  },
+  (table) => [
+    primaryKey({ columns: [table.chatId, table.userId] }),
+    index("chats_to_users_chatId_userId_idx").on(table.chatId, table.userId),
+  ]
+);
+
+export const chatsToUsersRelations = relations(chatsToUsers, ({ one }) => ({
+  chat: one(chats, {
+    fields: [chatsToUsers.chatId],
+    references: [chats.id],
+  }),
+  user: one(user, {
+    fields: [chatsToUsers.userId],
+    references: [user.id],
+  }),
+}));
+
 export type InsertUser = typeof user.$inferInsert;
 export type SelectUser = typeof user.$inferSelect;
+
+export type InsertChat = typeof chats.$inferInsert;
+export type SelectChat = typeof chats.$inferSelect;
+
+export type InsertChatMessage = typeof chatMessages.$inferInsert;
+export type SelectChatMessage = typeof chatMessages.$inferSelect;
+
+export type InsertChatToUser = typeof chatsToUsers.$inferInsert;
+export type SelectChatToUser = typeof chatsToUsers.$inferSelect;

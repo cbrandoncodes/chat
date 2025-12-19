@@ -8,6 +8,41 @@
       "when": 1765929224709,
       "tag": "0000_dizzy_ezekiel_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766100805961,
+      "tag": "0001_fancy_clint_barton",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766129159197,
+      "tag": "0002_loose_lady_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766134683139,
+      "tag": "0003_nifty_rhino",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766135280414,
+      "tag": "0004_sticky_franklin_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766139609952,
+      "tag": "0005_watery_punisher",
+      "breakpoints": true
     }
   ]
 }

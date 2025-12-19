@@ -60,7 +60,7 @@
 }
 
 :root {
-  --nav-height: 3.5rem;
+  --header-height: 3.5rem;
 
   --radius: 0.5rem;
   --tracking-normal: 0em;

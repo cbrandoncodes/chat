@@ -1,11 +1,11 @@
+import { SelectChatMessage, SelectUser } from "@shared/drizzle/schema";
+
 export type Chat = {
   id: string;
-  user: {
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-  unread?: boolean;
+  unread: string[];
   excerpt: string;
-  timestamp: string;
+  recipient: SelectUser;
+  lastMessage: SelectChatMessage | null;
+  createdAt: Date;
+  modifiedAt: Date;
 };

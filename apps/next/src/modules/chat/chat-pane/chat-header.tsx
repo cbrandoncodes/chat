@@ -9,16 +9,16 @@ import SearchIcon from "@/components/icons/search";
 import PhoneCallIcon from "@/components/icons/phone-call";
 import VideoCallIcon from "@/components/icons/video-call";
 import MoreHorizontalIcon from "@/components/icons/more-horizontal";
-import MessageIcon from "@/components/icons/message";
 import ContactInfo from "./contact-info";
+import { cn } from "@/lib/utils";
 
 type ChatHeaderProps = {
   user: {
     name: string;
     email: string;
+    isOnline: boolean;
     image?: string | null;
   };
-  onOpenChatList?: () => void;
 };
 
 const chatOptions = [
@@ -28,24 +28,11 @@ const chatOptions = [
   { icon: MoreHorizontalIcon, label: "More options" },
 ];
 
-export default function ChatHeader({ user, onOpenChatList }: ChatHeaderProps) {
-  const { name, email, image } = user;
+export default function ChatHeader({ user }: ChatHeaderProps) {
+  const { name, email, image, isOnline } = user;
 
   return (
     <div className="flex flex-col gap-2 px-4 py-4 lg:px-6">
-      {onOpenChatList && (
-        <div>
-          <Button
-            variant="outline"
-            onClick={onOpenChatList}
-            className="lg:hidden"
-          >
-            <MessageIcon />
-            Chats
-          </Button>
-        </div>
-      )}
-
       <div className="grid w-full grid-cols-[1fr_2.5rem] items-center gap-4 sm:grid-cols-[1fr_auto]">
         <div className="grid grid-cols-[2.5rem_1fr] items-center gap-2 overflow-hidden lg:gap-3">
           <ContactInfo
@@ -61,7 +48,14 @@ export default function ChatHeader({ user, onOpenChatList }: ChatHeaderProps) {
           </ContactInfo>
           <div className="flex max-w-[calc(60vw-4.5rem)] flex-col lg:max-w-[calc(40vw-16rem)]">
             <span className="block truncate text-sm font-semibold">{name}</span>
-            <span className="text-primary text-xs">Online</span>
+            <span
+              className={cn(
+                "text-xs",
+                isOnline ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              {isOnline ? "Online" : "Offline"}
+            </span>
           </div>
         </div>
 

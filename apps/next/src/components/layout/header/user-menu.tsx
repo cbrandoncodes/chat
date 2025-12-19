@@ -24,11 +24,13 @@ export default function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="inline-flex cursor-pointer items-center gap-2">
-        <Avatar>
+        <Avatar className="bg-muted">
           {image ? <AvatarImage src={image} alt={initials} /> : null}
-          <AvatarFallback className="rounded-lg">
-            <BoringAvatar size={32} name={email} variant="bauhaus" />
-          </AvatarFallback>
+          {image ? null : (
+            <AvatarFallback className="rounded-lg">
+              <BoringAvatar size={32} name={email} variant="bauhaus" />
+            </AvatarFallback>
+          )}
         </Avatar>
         <ChevronDownIcon className="size-4" />
       </DropdownMenuTrigger>

@@ -32,3 +32,8 @@ export async function updateUser({ id, name }: { id: string; name: string }) {
 
   return updatedUser;
 }
+
+export async function getUsers() {
+  const users = await db.query.user.findMany();
+  return users;
+}

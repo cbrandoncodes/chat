@@ -1,96 +1,114 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import ChatList from "./chat-list";
 import ChatPane from "./chat-pane";
-import ChatEmpty from "./chat-pane/chat-empty";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import type { Chat } from "@/types/chat";
+import { parseError } from "@/lib/utils";
+import { createChatAction, getChatsByUserIdAction } from "@/lib/actions/chats";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import {
+  setChats,
+  addChat,
+  setActiveChatId,
+  setIsLoading,
+} from "@/lib/store/slices/chats";
+import { SelectUser } from "@shared/drizzle/schema";
 
 type ChatProps = {
-  user: {
-    name: string;
-    email: string;
-    image?: string | null;
-  };
+  user: SelectUser;
 };
 
-const chats: Chat[] = [
-  {
-    id: "1",
-    user: {
-      name: "Sarah Chen",
-      email: "sarah@example.com",
-      image: "https://i.pravatar.cc/150?u=sarah",
-    },
-    unread: true,
-    excerpt: "Hey! Are we still on for the meeting tomorrow?",
-    timestamp: "2m ago",
-  },
-  {
-    id: "2",
-    user: { name: "Marcus Johnson", email: "marcus@example.com" },
-    unread: true,
-    excerpt: "I just sent over the documents you requested",
-    timestamp: "15m ago",
-  },
-  {
-    id: "3",
-    user: {
-      name: "Emily Rodriguez",
-      email: "emily@example.com",
-      image: "https://i.pravatar.cc/150?u=emily",
-    },
-    unread: false,
-    excerpt: "Thanks for your help with the project!",
-    timestamp: "1h ago",
-  },
-  {
-    id: "4",
-    user: {
-      name: "David Kim",
-      email: "david@example.com",
-      image: "https://i.pravatar.cc/150?u=david",
-    },
-    unread: false,
-    excerpt: "Let me know when you're free to chat",
-    timestamp: "3h ago",
-  },
-  {
-    id: "5",
-    user: { name: "Lisa Thompson", email: "lisa@example.com" },
-    unread: false,
-    excerpt: "The shipment has been dispatched 📦",
-    timestamp: "Yesterday",
-  },
-];
-
 export default function Chat({ user }: ChatProps) {
-  const [activeChatId, setActiveChatId] = useState<string>("1");
+  const dispatch = useAppDispatch();
+  const {
+    chats,
+    activeChatId,
+    isLoading: isLoadingChats,
+  } = useAppSelector((state) => state.chats);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const activeChat = chats.find((chat) => chat.id === activeChatId);
 
-  const handleSelectChat = (chatId: string) => {
-    setActiveChatId(chatId);
+  async function handleSelectChat({
+    chatId,
+    recipientId,
+  }: {
+    chatId?: string;
+    recipientId?: string;
+  }) {
+    if (recipientId) {
+      const existingChat = chats.find(
+        (chat) => chat.recipient.id === recipientId
+      );
+
+      if (existingChat) {
+        chatId = existingChat.id;
+      } else {
+        try {
+          const newChat = await createChatAction({
+            userId: user.id,
+            recipientId,
+          });
+          dispatch(addChat(newChat));
+          chatId = newChat.id;
+        } catch (error: unknown) {
+          const message = parseError(error);
+          toast.error(message);
+        }
+      }
+    }
+
+    chatId && dispatch(setActiveChatId(chatId));
     setSheetOpen(false);
-  };
+  }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        dispatch(setIsLoading(true));
+
+        const fetchedChats = await getChatsByUserIdAction({ userId: user.id });
+        dispatch(setChats(fetchedChats));
+
+        if (!activeChatId && fetchedChats.length >= 1) {
+          const latestChat = fetchedChats.reduce((latest, chat) =>
+            new Date(chat.modifiedAt) > new Date(latest.modifiedAt)
+              ? chat
+              : latest
+          );
+          dispatch(setActiveChatId(latestChat.id));
+        }
+      } catch (error: unknown) {
+        const message = parseError(error);
+        toast.error(message);
+      } finally {
+        dispatch(setIsLoading(false));
+      }
+    })();
+  }, [dispatch, user.id]);
 
   return (
-    <div className="h-full w-full">
+    <div className="flex h-[calc(100vh-var(--header-height)-2rem)] w-full items-stretch">
       {/* Desktop */}
-      <div className="hidden h-full w-full grid-cols-[0.45fr_0.55fr] items-stretch gap-4 lg:grid xl:grid-cols-[0.35fr_0.65fr]">
+      <div className="hidden w-full grid-cols-[0.45fr_0.55fr] grid-rows-1 gap-4 lg:grid xl:grid-cols-[0.35fr_0.65fr]">
         <ChatList
-          activeChatId={activeChatId}
+          isLoadingChats={isLoadingChats}
+          userId={user.id}
           onSelectChat={handleSelectChat}
           chats={chats}
         />
-        {activeChat ? <ChatPane user={activeChat.user} /> : <ChatEmpty />}
+        <ChatPane
+          chatId={activeChat?.id}
+          currentUserId={user.id}
+          recipient={activeChat?.recipient}
+        />
       </div>
 
       {/* Mobile */}
-      <div className="flex h-full w-full flex-col lg:hidden">
+      <div className="flex w-full flex-col lg:hidden">
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetContent
             showCloseButton={false}
@@ -99,21 +117,18 @@ export default function Chat({ user }: ChatProps) {
           >
             <SheetTitle className="sr-only">Chat List</SheetTitle>
             <ChatList
-              activeChatId={activeChatId}
+              userId={user.id}
               onSelectChat={handleSelectChat}
               chats={chats}
             />
           </SheetContent>
         </Sheet>
-        <div className="h-full w-full">
-          {activeChat ? (
-            <ChatPane
-              user={activeChat.user}
-              onOpenChatList={() => setSheetOpen(true)}
-            />
-          ) : (
-            <ChatEmpty />
-          )}
+        <div className="w-full">
+          <ChatPane
+            chatId={activeChat?.id}
+            currentUserId={user.id}
+            recipient={activeChat?.recipient}
+          />
         </div>
       </div>
     </div>

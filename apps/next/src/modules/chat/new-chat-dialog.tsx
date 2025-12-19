@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Loader2Icon, Search } from "lucide-react";
 
 import {
   Dialog,
@@ -12,17 +13,29 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import ProfileImage from "@/components/profile-image";
-import { users, type User } from "@/lib/data/users";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import {
+  setUsers,
+  setIsLoading as setIsLoadingUsers,
+} from "@/lib/store/slices/users";
+import { SelectUser } from "@shared/drizzle/schema";
+import { getUsersAction } from "@/lib/actions/users";
+import { parseError } from "@/lib/utils";
 
 type NewChatDialogProps = {
   children: React.ReactNode;
-  onSelectUser?: (user: User) => void;
+  onSelectUser?: (user: SelectUser) => void;
 };
 
 export default function NewChatDialog({
   children,
   onSelectUser,
 }: NewChatDialogProps) {
+  const dispatch = useAppDispatch();
+  const { users, isLoading: isLoadingUsers } = useAppSelector(
+    (state) => state.users
+  );
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -32,11 +45,28 @@ export default function NewChatDialog({
       user.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSelectUser = (user: User) => {
+  function handleSelectUser(user: SelectUser) {
     onSelectUser?.(user);
     setOpen(false);
     setSearch("");
-  };
+  }
+
+  useEffect(() => {
+    if (users.length > 0) return;
+
+    (async () => {
+      try {
+        dispatch(setIsLoadingUsers(true));
+        const fetchedUsers = await getUsersAction();
+        dispatch(setUsers(fetchedUsers));
+      } catch (error: unknown) {
+        const message = parseError(error);
+        toast.error(message);
+      } finally {
+        dispatch(setIsLoadingUsers(false));
+      }
+    })();
+  }, [dispatch, users.length]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -71,10 +101,16 @@ export default function NewChatDialog({
               <span className="text-sm font-medium">{user.name}</span>
             </button>
           ))}
-          {filteredUsers.length === 0 && (
-            <p className="text-muted-foreground py-4 text-center text-sm">
-              No users found
-            </p>
+          {isLoadingUsers ? (
+            <span className="text-muted-foreground inline-flex items-center justify-center p-2">
+              <Loader2Icon className="size-4 animate-spin" />
+            </span>
+          ) : (
+            filteredUsers.length === 0 && (
+              <p className="text-muted-foreground py-4 text-center text-sm">
+                No users found
+              </p>
+            )
           )}
         </div>
       </DialogContent>

@@ -1,0 +1,2 @@
+ALTER TABLE "chat_messages" ADD COLUMN "sender_id" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "chat_messages" ADD CONSTRAINT "chat_messages_sender_id_user_id_fk" FOREIGN KEY ("sender_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

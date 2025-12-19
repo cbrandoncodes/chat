@@ -1,6 +1,11 @@
 "use server";
 
-import { updateUser } from "@/lib/drizzle/queries/users";
+import { getUsers, updateUser } from "@/lib/drizzle/queries/users";
+
+export async function getUsersAction() {
+  const users = await getUsers();
+  return users;
+}
 
 export async function updateUserAction({
   id,

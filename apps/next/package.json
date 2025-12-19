@@ -31,8 +31,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
+    "date-fns": "^4.1.0",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
+    "emoji-picker-react": "^4.16.1",
     "googleapis": "^169.0.0",
     "lucide-react": "^0.561.0",
     "next": "15.4.8",
@@ -43,6 +45,7 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.68.0",
     "server-only": "^0.0.1",
+    "socket.io-client": "^4.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0"
   },
