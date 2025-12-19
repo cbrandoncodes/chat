@@ -6,9 +6,9 @@ import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import { Server } from "socket.io";
 
 import { auth } from "./lib/auth";
-import { authCheck } from "./lib/auth/auth-check";
 import { getChat, updateChat } from "@shared/drizzle/queries/chats";
 import { createChat } from "@shared/drizzle/queries/chats";
+import { getUser } from "@shared/drizzle/queries/users";
 import { insertChatMessage } from "@shared/drizzle/queries/chat-message";
 import { InsertChatMessage } from "@shared/drizzle/schema";
 
@@ -26,17 +26,9 @@ const io = new Server(server, {
 const userSockets = new Map<string, string>();
 
 io.use(async (socket, next) => {
-  console.log(
-    "headers ",
-    socket?.handshake?.headers,
-    "auth ",
-    socket?.handshake?.auth,
-    socket?.handshake
-  );
-  const session = await authCheck({ headers: socket.handshake.headers });
-  const user = session?.user;
+  const userId = socket.handshake.auth.userId;
 
-  console.log("session ", session);
+  const user = await getUser({ id: userId });
 
   if (!user) return next(new Error("unauthorized"));
 

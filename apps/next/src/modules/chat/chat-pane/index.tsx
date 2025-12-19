@@ -48,6 +48,7 @@ function ChatPaneContent({
     sendMessage,
     markChatAsRead,
   } = useChat({
+    userId: currentUserId,
     chatId,
     recipientUserId: recipient.id,
   });

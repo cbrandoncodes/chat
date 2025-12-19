@@ -15,11 +15,12 @@ import { updateUser } from "@/lib/store/slices/users";
 import { Chat } from "@/types/chat";
 
 type Props = {
+  userId: string;
   chatId: string;
   recipientUserId: string;
 };
 
-export function useChat({ chatId, recipientUserId }: Props) {
+export function useChat({ userId, chatId, recipientUserId }: Props) {
   const dispatch = useDispatch<AppDispatch>();
   const socketRef = useRef<Socket | null>(null);
   const hasFetchedRef = useRef(false);
@@ -69,12 +70,15 @@ export function useChat({ chatId, recipientUserId }: Props) {
     }
   }, [chatId, dispatch, messages]);
 
-  function connect() {
+  async function connect() {
     if (socketRef.current) return;
 
     const socket = io(process.env.NEXT_PUBLIC_SERVER_BASE_URL!, {
       withCredentials: true,
       transports: ["websocket"],
+      auth: {
+        userId: userId,
+      },
     });
 
     socket.on("connect", () => {

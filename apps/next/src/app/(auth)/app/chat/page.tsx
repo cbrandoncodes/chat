@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import Chat from "@/modules/chat";
 import { getUser } from "@shared/drizzle/queries/users";
-import { authCheck } from "@/lib/utils/auth";
+import { authCheck, getAuthToken } from "@/lib/utils/auth";
 
 export const metadata: Metadata = {
   title: "Chat",
@@ -15,6 +15,7 @@ export default async function ChatPage() {
 
   const userId = session?.user?.id;
   const user = await getUser({ id: userId });
+  const authToken = await getAuthToken();
 
   if (!user) {
     redirect("/auth");
@@ -22,7 +23,7 @@ export default async function ChatPage() {
 
   return (
     <div className="h-full">
-      <Chat user={user} />
+      <Chat user={user} authToken={authToken} />
     </div>
   );
 }

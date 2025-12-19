@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { betterFetch } from "@better-fetch/fetch";
 
 import type { Session } from "@/types/auth";
 import type { AuthSession, AuthUser } from "@/types/auth";
+import { BETTER_AUTH_TOKEN } from "@/lib/cookies";
 
 export async function authCheck(
   searchParams: { [key: string]: string } = {}
@@ -24,4 +25,11 @@ export async function authCheck(
   }
 
   return session;
+}
+
+export async function getAuthToken() {
+  const cookiesList = await cookies();
+  const token = cookiesList.get(BETTER_AUTH_TOKEN)?.value;
+
+  return token;
 }
