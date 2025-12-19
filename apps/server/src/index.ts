@@ -26,6 +26,13 @@ const io = new Server(server, {
 const userSockets = new Map<string, string>();
 
 io.use(async (socket, next) => {
+  console.log(
+    "headers ",
+    socket?.handshake?.headers,
+    "auth ",
+    socket?.handshake?.auth,
+    socket?.handshake
+  );
   const session = await authCheck({ headers: socket.handshake.headers });
   const user = session?.user;
 
