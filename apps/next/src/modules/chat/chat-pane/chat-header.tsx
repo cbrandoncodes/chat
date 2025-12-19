@@ -11,12 +11,14 @@ import VideoCallIcon from "@/components/icons/video-call";
 import MoreHorizontalIcon from "@/components/icons/more-horizontal";
 import ContactInfo from "./contact-info";
 import { cn } from "@/lib/utils";
+import BotProfileImage from "@/components/bot-profile-image";
 
 type ChatHeaderProps = {
   user: {
     name: string;
     email: string;
     isOnline: boolean;
+    isBot?: boolean;
     image?: string | null;
   };
 };
@@ -29,7 +31,9 @@ const chatOptions = [
 ];
 
 export default function ChatHeader({ user }: ChatHeaderProps) {
-  const { name, email, image, isOnline } = user;
+  const { name, email, image, isOnline: isUserOnline, isBot } = user;
+
+  const isOnline = isBot ? true : isUserOnline;
 
   return (
     <div className="flex flex-col gap-2 px-4 py-4 lg:px-6">
@@ -43,7 +47,11 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
             }}
           >
             <Button variant="ghost" size="icon" className="size-10">
-              <ProfileImage name={name} image={image ?? undefined} />
+              {isBot ? (
+                <BotProfileImage />
+              ) : (
+                <ProfileImage name={name} image={image ?? undefined} />
+              )}
             </Button>
           </ContactInfo>
           <div className="flex max-w-[calc(60vw-4.5rem)] flex-col lg:max-w-[calc(40vw-16rem)]">

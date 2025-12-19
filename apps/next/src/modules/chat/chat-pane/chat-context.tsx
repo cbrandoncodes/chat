@@ -10,7 +10,9 @@ type ChatContextType = {
   messages: SelectChatMessage[];
   isConnected: boolean;
   isLoadingMessages: boolean;
+  isBotResponding: boolean;
   sendMessage: (content: string) => void;
+  sendMessageToBot: (content: string) => void;
 };
 
 const ChatContext = createContext<ChatContextType | null>(null);

@@ -23,7 +23,13 @@ const chatMessagesSlice = createSlice({
     },
     addMessage: (
       state,
-      action: PayloadAction<{ chatId: string; message: SelectChatMessage }>
+      action: PayloadAction<{
+        chatId: string;
+        message: Omit<SelectChatMessage, "modifiedAt" | "createdAt"> & {
+          modifiedAt: Date | string;
+          createdAt: Date | string;
+        };
+      }>
     ) => {
       const { chatId, message } = action.payload;
       if (!state.messages[chatId]) {
@@ -32,12 +38,30 @@ const chatMessagesSlice = createSlice({
       // Check if message already exists to avoid duplicates
       const exists = state.messages[chatId].some((m) => m.id === message.id);
       if (!exists) {
-        state.messages[chatId].push(message);
+        const modifiedAt =
+          typeof message.modifiedAt === "string"
+            ? new Date(message.modifiedAt)
+            : message.modifiedAt;
+        const createdAt =
+          typeof message.createdAt === "string"
+            ? new Date(message.createdAt)
+            : message.createdAt;
+        state.messages[chatId].push({
+          ...message,
+          modifiedAt,
+          createdAt,
+        });
       }
     },
     updateMessage: (
       state,
-      action: PayloadAction<{ chatId: string; message: SelectChatMessage }>
+      action: PayloadAction<{
+        chatId: string;
+        message: Omit<SelectChatMessage, "modifiedAt" | "createdAt"> & {
+          modifiedAt: Date | string;
+          createdAt: Date | string;
+        };
+      }>
     ) => {
       const { chatId, message } = action.payload;
       if (state.messages[chatId]) {
@@ -45,7 +69,19 @@ const chatMessagesSlice = createSlice({
           (m) => m.id === message.id
         );
         if (index !== -1) {
-          state.messages[chatId][index] = message;
+          const modifiedAt =
+            typeof message.modifiedAt === "string"
+              ? new Date(message.modifiedAt)
+              : message.modifiedAt;
+          const createdAt =
+            typeof message.createdAt === "string"
+              ? new Date(message.createdAt)
+              : message.createdAt;
+          state.messages[chatId][index] = {
+            ...message,
+            modifiedAt,
+            createdAt,
+          };
         }
       }
     },

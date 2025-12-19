@@ -67,6 +67,9 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/chat
 # Google
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+
+# OpenAI
+OPENAI_API_KEY=
 ```
 
 ### 3. Create a .env file in the apps/server

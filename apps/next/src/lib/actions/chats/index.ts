@@ -3,14 +3,16 @@
 import {
   createChat,
   deleteChat,
+  getBotChat,
   getChatsByUserId,
   updateChat,
 } from "@/lib/drizzle/queries/chats";
 import {
   deleteMessagesByChatId,
   getMessagesByChatId,
+  insertMessage,
 } from "@/lib/drizzle/queries/messages";
-import { InsertChat } from "@shared/drizzle/schema";
+import { InsertChat, InsertChatMessage } from "@shared/drizzle/schema";
 
 export async function getChatsByUserIdAction({ userId }: { userId: string }) {
   const chats = await getChatsByUserId({ userId });
@@ -51,4 +53,18 @@ export async function getMessagesAction({ chatId }: { chatId: string }) {
 
 export async function deleteChatAction({ chatId }: { chatId: string }) {
   await deleteChat({ id: chatId });
+}
+
+export async function getBotChatAction({ userId }: { userId: string }) {
+  const chat = await getBotChat({ userId });
+  return chat;
+}
+
+export async function insertChatMessageAction({
+  data,
+}: {
+  data: InsertChatMessage & { chatId: string };
+}) {
+  const message = await insertMessage({ data });
+  return message;
 }

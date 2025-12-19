@@ -1,31 +1,41 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { io, Socket } from "socket.io-client";
+import { generate as generateUuid } from "short-uuid";
+import { toast } from "sonner";
 
 import type { RootState, AppDispatch } from "@/lib/store";
 import {
   addMessage,
   setMessages,
+  updateMessage,
   setIsLoading,
+  removeMessage,
 } from "@/lib/store/slices/chat-messages";
 import { updateChat } from "@/lib/store/slices/chats";
-import { getMessagesAction } from "@/lib/actions/chats";
-import { SelectChatMessage } from "@shared/drizzle/schema";
+import {
+  getMessagesAction,
+  insertChatMessageAction,
+} from "@/lib/actions/chats";
 import { updateUser } from "@/lib/store/slices/users";
-import { Chat } from "@/types/chat";
+import { parsePartialJson } from "@/lib/utils/parse-partial-json";
+import { SelectChatMessage } from "@shared/drizzle/schema";
+import { BotChatResponse, Chat } from "@/types/chat";
 
 type Props = {
+  isBot?: boolean;
   userId: string;
   chatId: string;
   recipientUserId: string;
 };
 
-export function useChat({ userId, chatId, recipientUserId }: Props) {
+export function useChat({ isBot, userId, chatId, recipientUserId }: Props) {
   const dispatch = useDispatch<AppDispatch>();
   const socketRef = useRef<Socket | null>(null);
   const hasFetchedRef = useRef(false);
   const chatRef = useRef<Chat | undefined>(undefined);
   const [isConnected, setIsConnected] = useState(false);
+  const [isBotResponding, setIsBotResponding] = useState(false);
 
   const chat = useSelector((state: RootState) =>
     state.chats.chats.find((c) => c.id === chatId)
@@ -131,7 +141,132 @@ export function useChat({ userId, chatId, recipientUserId }: Props) {
       dispatch(updateUser({ id: userId, isOnline: false }));
     });
 
+    socket.on("user:online-users", ({ userIds }: { userIds: string[] }) => {
+      userIds.forEach((userId) => {
+        dispatch(updateUser({ id: userId, isOnline: true }));
+      });
+    });
+
     socketRef.current = socket;
+  }
+
+  async function sendMessageToBot(content: string) {
+    setIsBotResponding(true);
+
+    const message = await insertChatMessageAction({
+      data: {
+        chatId,
+        senderId: userId,
+        content,
+      },
+    });
+    dispatch(
+      addMessage({
+        chatId,
+        message: {
+          id: message.id,
+          chatId,
+          content,
+          senderId: userId,
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+        },
+      })
+    );
+
+    const botMessageId = generateUuid();
+    dispatch(
+      addMessage({
+        chatId,
+        message: {
+          id: botMessageId,
+          chatId,
+          content: "",
+          senderId: recipientUserId,
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+        },
+      })
+    );
+
+    let parsed: BotChatResponse | null = null;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chatId,
+          messageId: message.id,
+        }),
+      });
+
+      if (!response.body) {
+        toast.error("No result in response");
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          const decoded = decoder.decode(value, { stream: true });
+          result += decoded;
+
+          const parsedJson = parsePartialJson(result) as BotChatResponse;
+          parsed = parsedJson ?? result;
+
+          dispatch(
+            updateMessage({
+              chatId,
+              message: {
+                id: botMessageId,
+                content: parsed?.response ?? "Empty response.",
+                chatId,
+                senderId: recipientUserId,
+                createdAt: new Date().toISOString(),
+                modifiedAt: new Date().toISOString(),
+              },
+            })
+          );
+        }
+      } catch (error) {
+        console.error("error reading stream ", error);
+        throw new Error("Error reading stream");
+      } finally {
+        reader.releaseLock();
+
+        parsed &&
+          dispatch(
+            updateChat({
+              id: chatId,
+              excerpt: parsed.response ?? "Empty response.",
+            })
+          );
+      }
+    } catch (error: unknown) {
+      console.log("error ", error instanceof Error ? error.message : error);
+
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to send message. Please try again."
+      );
+
+      dispatch(removeMessage({ chatId, messageId: botMessageId }));
+    } finally {
+      setIsBotResponding(false);
+    }
   }
 
   function sendMessage(content: string) {
@@ -169,6 +304,8 @@ export function useChat({ userId, chatId, recipientUserId }: Props) {
 
   // connect to websocket
   useEffect(() => {
+    if (isBot) return;
+
     connect();
     return () => disconnect();
   }, [chatId, recipientUserId]);
@@ -177,8 +314,10 @@ export function useChat({ userId, chatId, recipientUserId }: Props) {
     messages,
     isConnected,
     isLoadingMessages,
+    isBotResponding,
     markChatAsRead,
     sendMessage,
+    sendMessageToBot,
     disconnect,
   };
 }

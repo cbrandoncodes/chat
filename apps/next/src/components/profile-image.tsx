@@ -15,7 +15,7 @@ export default function ProfileImage({
   className,
 }: ProfileImageProps) {
   return (
-    <Avatar className={cn("size-10", className)}>
+    <Avatar className={cn("size-10 items-center justify-center", className)}>
       <AvatarImage src={image} alt={name} />
       <AvatarFallback className="rounded-lg">
         <BoringAvatar

@@ -37,3 +37,10 @@ export async function getUsers() {
   const users = await db.query.user.findMany();
   return users;
 }
+
+export async function getChatBotUser() {
+  const user = await db.query.user.findFirst({
+    where: eq(users.isBot, true),
+  });
+  return user ?? null;
+}

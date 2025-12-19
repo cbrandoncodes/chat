@@ -43,6 +43,13 @@
       "when": 1766139609952,
       "tag": "0005_watery_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766175208802,
+      "tag": "0006_striped_azazel",
+      "breakpoints": true
     }
   ]
 }

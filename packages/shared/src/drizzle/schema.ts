@@ -6,7 +6,6 @@ import {
   uuid,
   boolean,
   index,
-  pgEnum,
   primaryKey,
   jsonb,
 } from "drizzle-orm/pg-core";
@@ -20,6 +19,7 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   isOnline: boolean("is_online").default(false).notNull(),
+  isBot: boolean("is_bot").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

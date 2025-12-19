@@ -7,7 +7,11 @@ import ChatList from "./chat-list";
 import ChatPane from "./chat-pane";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { parseError } from "@/lib/utils";
-import { createChatAction, getChatsByUserIdAction } from "@/lib/actions/chats";
+import {
+  createChatAction,
+  getBotChatAction,
+  getChatsByUserIdAction,
+} from "@/lib/actions/chats";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import {
   setChats,
@@ -74,11 +78,15 @@ export default function Chat({ user }: ChatProps) {
       try {
         dispatch(setIsLoading(true));
 
-        const fetchedChats = await getChatsByUserIdAction({ userId: user.id });
-        dispatch(setChats(fetchedChats));
+        const [fetchedChats, botChat] = await Promise.all([
+          getChatsByUserIdAction({ userId: user.id }),
+          getBotChatAction({ userId: user.id }),
+        ]);
+        const allChats = [...fetchedChats, botChat];
+        dispatch(setChats(allChats));
 
-        if (!activeChatId && fetchedChats.length >= 1) {
-          const latestChat = fetchedChats.reduce((latest, chat) =>
+        if (!activeChatId && allChats.length >= 1) {
+          const latestChat = allChats.reduce((latest, chat) =>
             new Date(chat.modifiedAt) > new Date(latest.modifiedAt)
               ? chat
               : latest
@@ -105,6 +113,7 @@ export default function Chat({ user }: ChatProps) {
           chats={chats}
         />
         <ChatPane
+          isBot={activeChatRecipient?.isBot ?? false}
           chatId={activeChat?.id}
           currentUserId={user.id}
           recipient={activeChatRecipient}
@@ -129,6 +138,7 @@ export default function Chat({ user }: ChatProps) {
         </Sheet>
         <div className="h-full w-full">
           <ChatPane
+            isBot={activeChatRecipient?.isBot ?? false}
             chatId={activeChat?.id}
             currentUserId={user.id}
             recipient={activeChatRecipient}

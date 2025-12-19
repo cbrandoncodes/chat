@@ -5,8 +5,9 @@ import ChecksIcon from "@/components/icons/checks";
 import MessageIcon from "@/components/icons/message";
 import ProfileImage from "@/components/profile-image";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import BotProfileImage from "@/components/bot-profile-image";
 import ChatMenu from "@/modules/chat/chat-menu";
-import { cn } from "@/lib/utils";
+import { cn, truncateString } from "@/lib/utils";
 import { Chat } from "@/types/chat";
 
 type ChatListCoreProps = {
@@ -40,6 +41,7 @@ function ChatEntry({
 
   const { recipient, excerpt, unread, lastMessage } = chat;
 
+  const isBot = recipient?.isBot;
   const isUnread = unread.length >= 1 && lastMessage?.senderId !== userId;
   const timestamp = lastMessage?.createdAt
     ? formatDistanceToNowStrict(lastMessage?.createdAt)
@@ -65,10 +67,14 @@ function ChatEntry({
             unread && "bg-muted"
           )}
         >
-          <ProfileImage
-            name={recipient.name}
-            image={recipient.image ?? undefined}
-          />
+          {isBot ? (
+            <BotProfileImage />
+          ) : (
+            <ProfileImage
+              name={recipient.name}
+              image={recipient.image ?? undefined}
+            />
+          )}
           <div className="flex flex-1 flex-col gap-y-1">
             <div className="flex items-center justify-between gap-1">
               <span className="text-sm font-medium">{recipient.name}</span>
@@ -76,13 +82,19 @@ function ChatEntry({
             </div>
             <div className="text-muted-foreground flex w-full items-center justify-between gap-1">
               <p className="text-muted-foreground text-xs">
-                {excerpt && excerpt.length >= 1 ? excerpt : "No messages yet"}
+                {excerpt && excerpt.length >= 1
+                  ? truncateString(excerpt, 50)
+                  : "No messages yet"}
               </p>
-              <span
-                className={isUnread ? "text-muted-foreground" : "text-primary"}
-              >
-                <ChecksIcon className="size-4" />
-              </span>
+              {lastMessage && (
+                <span
+                  className={
+                    isUnread ? "text-muted-foreground" : "text-primary"
+                  }
+                >
+                  <ChecksIcon className="size-4" />
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -106,10 +118,10 @@ export default function ChatListCore({
   const sortedChats = useMemo(
     () =>
       [...chats].sort((a, b) => {
-        return (
-          new Date(b.lastMessage?.createdAt ?? 0).getTime() -
-          new Date(a.lastMessage?.createdAt ?? 0).getTime()
-        );
+        return a.recipient?.isBot
+          ? -1
+          : new Date(b.lastMessage?.createdAt ?? 0).getTime() -
+              new Date(a.lastMessage?.createdAt ?? 0).getTime();
       }),
     [chats]
   );

@@ -9,3 +9,11 @@ export type Chat = {
   createdAt: Date;
   modifiedAt: Date;
 };
+
+export type BotChatResponse = {
+  response: string;
+  context: {
+    response: string;
+    action?: "generate" | "modify";
+  };
+};

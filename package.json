@@ -10,7 +10,8 @@
     "check-types": "turbo run check-types",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx migrate.ts"
+    "db:migrate": "tsx migrate.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "workspaces": [
     "apps/*",

@@ -9,17 +9,25 @@ import { Input } from "@/components/ui/input";
 import { useChatContext } from "./chat-context";
 import { cn } from "@/lib/utils";
 
-export default function ChatActions() {
-  const { sendMessage, isConnected } = useChatContext();
+type ChatActionsProps = {
+  isBot?: boolean;
+};
+
+export default function ChatActions({ isBot = false }: ChatActionsProps) {
+  const { sendMessage, sendMessageToBot, isConnected, isBotResponding } =
+    useChatContext();
   const [message, setMessage] = useState("");
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const actionDisabled =
+    !message.trim() || (isBot ? isBotResponding : !isConnected);
+
   function handleSendMessage() {
     const trimmedMessage = message.trim();
-    if (!trimmedMessage || !isConnected) return;
+    if (!trimmedMessage || (isBot ? isBotResponding : !isConnected)) return;
 
-    sendMessage(trimmedMessage);
+    isBot ? sendMessageToBot(trimmedMessage) : sendMessage(trimmedMessage);
     setMessage("");
     inputRef.current?.focus();
   }
@@ -83,10 +91,10 @@ export default function ChatActions() {
           <Button
             size="icon"
             onClick={handleSendMessage}
-            disabled={!message.trim() || !isConnected}
+            disabled={actionDisabled}
             className={cn(
               "bg-primary size-9 rounded-full",
-              (!message.trim() || !isConnected) && "opacity-50"
+              actionDisabled && "opacity-50"
             )}
           >
             <Send className="text-background size-4" />

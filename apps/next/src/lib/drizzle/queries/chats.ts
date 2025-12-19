@@ -1,6 +1,7 @@
 "server-only";
 
 import { desc, eq } from "drizzle-orm/sql";
+import { randomUUID } from "crypto";
 
 import { db } from "@shared/drizzle";
 import {
@@ -37,22 +38,24 @@ export async function getChatsByUserId({
     },
   });
 
-  const chatsWithRecipients = rows.map((row) => {
-    const chat = row.chat;
+  const chatsWithRecipients = rows
+    .map((row) => {
+      const chat = row.chat;
 
-    const recipient = chat.participants.find((p) => p.userId !== userId)
-      ?.user as SelectUser;
+      const recipient = chat.participants.find((p) => p.userId !== userId)
+        ?.user as SelectUser;
 
-    return {
-      id: chat.id,
-      unread: chat.unread,
-      excerpt: chat.excerpt,
-      lastMessage: chat?.messages?.[0] ?? null,
-      createdAt: chat.createdAt,
-      modifiedAt: chat.modifiedAt,
-      recipient,
-    };
-  });
+      return {
+        id: chat.id,
+        unread: chat.unread,
+        excerpt: chat.excerpt,
+        lastMessage: chat?.messages?.[0] ?? null,
+        createdAt: chat.createdAt,
+        modifiedAt: chat.modifiedAt,
+        recipient,
+      };
+    })
+    .filter((chat) => !chat.recipient?.isBot);
 
   return chatsWithRecipients;
 }
@@ -152,4 +155,89 @@ export async function updateChat({
 
 export async function deleteChat({ id }: { id: string }) {
   await db.delete(chats).where(eq(chats.id, id));
+}
+
+export async function getBotChat({ userId }: { userId: string }) {
+  const botUser =
+    (await db.query.user.findFirst({
+      where: eq(user.isBot, true),
+    })) ??
+    (
+      await db
+        .insert(user)
+        .values({
+          id: randomUUID().toString(),
+          name: "AI Chatbot",
+          email: "bot@chat.com",
+          emailVerified: true,
+          image: null,
+          isBot: true,
+        })
+        .returning()
+    )?.[0];
+
+  if (!botUser) {
+    throw new Error("Bot user not found");
+  }
+
+  const botChats =
+    (await db.query.chatsToUsers.findMany({
+      where: eq(chatsToUsers.userId, botUser.id),
+      with: {
+        chat: {
+          with: {
+            participants: {
+              with: {
+                user: true,
+              },
+            },
+            messages: {
+              limit: 1,
+              orderBy: desc(chatMessages.createdAt),
+            },
+          },
+        },
+      },
+    })) ?? [];
+
+  let userBotChat = botChats.find(({ chat: { participants } }) => {
+    return !!participants.find(
+      ({ userId: participantUserId }) => participantUserId === userId
+    );
+  })?.chat;
+
+  if (!userBotChat) {
+    const newChat = await createChat({
+      userId,
+      recipientId: botUser.id,
+    });
+
+    userBotChat = {
+      id: newChat.id,
+      createdAt: newChat.createdAt,
+      unread: newChat.unread,
+      excerpt: newChat.excerpt,
+      modifiedAt: newChat.modifiedAt,
+      messages: [],
+      participants: [
+        {
+          createdAt: newChat.createdAt,
+          userId: botUser.id,
+          chatId: newChat.id,
+          user: botUser,
+        },
+      ],
+    };
+  }
+
+  return {
+    id: userBotChat.id,
+    unread: userBotChat.unread,
+    excerpt: userBotChat.excerpt,
+    lastMessage: userBotChat?.messages?.[0] ?? null,
+    createdAt: userBotChat.createdAt,
+    modifiedAt: userBotChat.modifiedAt,
+    recipient: userBotChat.participants.find((p) => p.userId !== userId)
+      ?.user as SelectUser,
+  };
 }

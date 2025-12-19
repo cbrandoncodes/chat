@@ -10,12 +10,14 @@ import { SelectUser } from "@shared/drizzle/schema";
 
 type ChatPaneProps = {
   chatId?: string;
+  isBot?: boolean;
   currentUserId?: string;
   recipient?: SelectUser;
 };
 
 export default function ChatPane({
   chatId,
+  isBot,
   currentUserId,
   recipient,
 }: ChatPaneProps) {
@@ -25,6 +27,7 @@ export default function ChatPane({
 
   return (
     <ChatPaneContent
+      isBot={isBot}
       chatId={chatId}
       currentUserId={currentUserId}
       recipient={recipient}
@@ -33,10 +36,12 @@ export default function ChatPane({
 }
 
 function ChatPaneContent({
+  isBot,
   chatId,
   currentUserId,
   recipient,
 }: {
+  isBot?: boolean;
   chatId: string;
   currentUserId: string;
   recipient: SelectUser;
@@ -45,9 +50,12 @@ function ChatPaneContent({
     messages,
     isConnected,
     isLoadingMessages,
+    isBotResponding,
     sendMessage,
+    sendMessageToBot,
     markChatAsRead,
   } = useChat({
+    isBot,
     userId: currentUserId,
     chatId,
     recipientUserId: recipient.id,
@@ -62,13 +70,15 @@ function ChatPaneContent({
         messages,
         isConnected,
         isLoadingMessages,
+        isBotResponding,
         sendMessage,
+        sendMessageToBot,
       }}
     >
       <div className="bg-background flex h-full flex-col rounded-3xl shadow-sm">
         <ChatHeader user={recipient} />
         <ChatMessages markChatAsRead={markChatAsRead} />
-        <ChatActions />
+        <ChatActions isBot={isBot} />
       </div>
     </ChatProvider>
   );
