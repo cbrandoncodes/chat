@@ -28,9 +28,13 @@ export default function Chat({ user }: ChatProps) {
     activeChatId,
     isLoading: isLoadingChats,
   } = useAppSelector((state) => state.chats);
+  const { users } = useAppSelector((state) => state.users);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const activeChat = chats.find((chat) => chat.id === activeChatId);
+  const activeChatRecipient =
+    users.find((user) => user.id === activeChat?.recipient?.id) ??
+    activeChat?.recipient;
 
   async function handleSelectChat({
     chatId,
@@ -103,7 +107,7 @@ export default function Chat({ user }: ChatProps) {
         <ChatPane
           chatId={activeChat?.id}
           currentUserId={user.id}
-          recipient={activeChat?.recipient}
+          recipient={activeChatRecipient}
         />
       </div>
 
@@ -113,7 +117,7 @@ export default function Chat({ user }: ChatProps) {
           <SheetContent
             showCloseButton={false}
             side="left"
-            className="w-full max-w-[90vw] p-0 sm:max-w-md"
+            className="h-full w-full max-w-[90vw] p-0 sm:max-w-md"
           >
             <SheetTitle className="sr-only">Chat List</SheetTitle>
             <ChatList
@@ -123,11 +127,11 @@ export default function Chat({ user }: ChatProps) {
             />
           </SheetContent>
         </Sheet>
-        <div className="w-full">
+        <div className="h-full w-full">
           <ChatPane
             chatId={activeChat?.id}
             currentUserId={user.id}
-            recipient={activeChat?.recipient}
+            recipient={activeChatRecipient}
           />
         </div>
       </div>

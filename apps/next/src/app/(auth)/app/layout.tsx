@@ -6,10 +6,10 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { SiteHeader } from "@/components/layout/header";
 import PageMessage from "@/components/page-message";
-import { authCheck } from "@/lib/utils/auth";
-import { getUser } from "@/lib/drizzle/queries/users";
-import { SelectUser } from "@shared/drizzle/schema";
 import { UserProfileDialog } from "@/components/user-profile-dialog";
+import { authCheck } from "@/lib/utils/auth";
+import { getUser } from "@shared/drizzle/queries/users";
+import { SelectUser } from "@shared/drizzle/schema";
 
 export default async function AppLayout({
   children,

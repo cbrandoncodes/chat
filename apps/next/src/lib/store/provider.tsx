@@ -17,4 +17,3 @@ export default function StoreProvider({ children }: StoreProviderProps) {
 
   return <Provider store={storeRef.current}>{children}</Provider>;
 }
-

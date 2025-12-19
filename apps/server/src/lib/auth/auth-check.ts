@@ -8,8 +8,9 @@ export async function authCheck({
 }: {
   headers: http.IncomingHttpHeaders;
 }) {
+  const parsedHeaders = fromNodeHeaders(headers);
   const session = await auth.api.getSession({
-    headers: fromNodeHeaders(headers),
+    headers: parsedHeaders,
   });
 
   return session ?? null;

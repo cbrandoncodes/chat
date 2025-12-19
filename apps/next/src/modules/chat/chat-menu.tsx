@@ -59,7 +59,7 @@ export default function ChatMenu({
       clearChatAction({ chatId });
 
       dispatch(clearMessages(chatId));
-      dispatch(updateChat({ id: chatId, unread: [] }));
+      dispatch(updateChat({ id: chatId, unread: [], excerpt: "" }));
     } catch (error) {
       console.error(error);
       toast.error("Failed to clear chat");

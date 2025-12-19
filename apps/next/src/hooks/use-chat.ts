@@ -140,6 +140,12 @@ export function useChat({ chatId, recipientUserId }: Props) {
     });
   }
 
+  function markChatAsRead() {
+    if (!isConnected) return;
+    socketRef.current?.emit("chat:read", { chatId, recipientUserId });
+    dispatch(updateChat({ id: chatId, unread: [] }));
+  }
+
   function disconnect() {
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -167,6 +173,7 @@ export function useChat({ chatId, recipientUserId }: Props) {
     messages,
     isConnected,
     isLoadingMessages,
+    markChatAsRead,
     sendMessage,
     disconnect,
   };

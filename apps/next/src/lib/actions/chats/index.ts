@@ -36,6 +36,12 @@ export async function updateChatAction(data: {
 
 export async function clearChatAction({ chatId }: { chatId: string }) {
   await deleteMessagesByChatId({ chatId });
+  await updateChat({
+    data: {
+      id: chatId,
+      excerpt: "",
+    },
+  });
 }
 
 export async function getMessagesAction({ chatId }: { chatId: string }) {

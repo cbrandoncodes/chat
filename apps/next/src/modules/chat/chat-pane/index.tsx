@@ -41,7 +41,13 @@ function ChatPaneContent({
   currentUserId: string;
   recipient: SelectUser;
 }) {
-  const { messages, isConnected, isLoadingMessages, sendMessage } = useChat({
+  const {
+    messages,
+    isConnected,
+    isLoadingMessages,
+    sendMessage,
+    markChatAsRead,
+  } = useChat({
     chatId,
     recipientUserId: recipient.id,
   });
@@ -58,9 +64,9 @@ function ChatPaneContent({
         sendMessage,
       }}
     >
-      <div className="bg-background flex flex-col rounded-3xl shadow-sm">
+      <div className="bg-background flex h-full flex-col rounded-3xl shadow-sm">
         <ChatHeader user={recipient} />
-        <ChatMessages />
+        <ChatMessages markChatAsRead={markChatAsRead} />
         <ChatActions />
       </div>
     </ChatProvider>

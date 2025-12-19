@@ -29,6 +29,8 @@ io.use(async (socket, next) => {
   const session = await authCheck({ headers: socket.handshake.headers });
   const user = session?.user;
 
+  console.log("session ", session);
+
   if (!user) return next(new Error("unauthorized"));
 
   socket.data.userId = user.id;
@@ -145,6 +147,13 @@ app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 app.get("/api/me", async (req, res) => {
   const session = await auth.api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  });
+  return res.json(session);
+});
+
+app.get("/api/sign-out", async (req, res) => {
+  const session = await auth.api.signOut({
     headers: fromNodeHeaders(req.headers),
   });
   return res.json(session);

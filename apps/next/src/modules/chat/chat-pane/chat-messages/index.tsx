@@ -7,10 +7,8 @@ import ChecksIcon from "@/components/icons/checks";
 import { useChatContext } from "@/modules/chat/chat-pane/chat-context";
 import ChatMessagesSkeleton from "./chat-messages-skeleton";
 import { SelectChatMessage } from "@shared/drizzle/schema";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { useAppSelector } from "@/lib/store/hooks";
 import { cn } from "@/lib/utils";
-import { updateChat } from "@/lib/store/slices/chats";
-import { updateChatAction } from "@/lib/actions/chats";
 import { Chat } from "@/types/chat";
 
 type MessageGroup = {
@@ -181,10 +179,13 @@ function EmptyMessages() {
   );
 }
 
-export default function ChatMessages() {
+export default function ChatMessages({
+  markChatAsRead,
+}: {
+  markChatAsRead: () => void;
+}) {
   const { chatId, messages, currentUserId, isLoadingMessages } =
     useChatContext();
-  const dispatch = useAppDispatch();
   const { chats } = useAppSelector((state) => state.chats);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -202,11 +203,9 @@ export default function ChatMessages() {
   // mark chat as read when viewing unread messages
   useEffect(() => {
     if (isUnread) {
-      updateChatAction({ data: { id: chatId, unread: [] } }).then(() => {
-        dispatch(updateChat({ id: chatId, unread: [] }));
-      });
+      markChatAsRead();
     }
-  }, [isUnread, chatId, dispatch]);
+  }, [isUnread, markChatAsRead]);
 
   // auto-scroll to bottom when new messages arrive
   useEffect(() => {

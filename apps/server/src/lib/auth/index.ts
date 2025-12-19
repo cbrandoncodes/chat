@@ -32,20 +32,27 @@ export const auth = betterAuth({
     },
   },
 
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: true,
-    },
-    cookie: {
-      sameSite: "none",
-      secure: true,
-      path: "/",
-    },
-    defaultCookieAttributes: {
-      secure: true,
-      sameSite: "none",
-    },
-  },
+  ...(process.env.NODE_ENV === "production"
+    ? {
+        advanced: {
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: process.env.CLIENT_DOMAIN as string,
+          },
+          cookie: {
+            sameSite: "none",
+            secure: true,
+            domain: process.env.CLIENT_DOMAIN as string,
+            path: "/",
+          },
+          defaultCookieAttributes: {
+            secure: true,
+            sameSite: "none",
+            domain: process.env.CLIENT_DOMAIN as string,
+          },
+        },
+      }
+    : {}),
 
   plugins: [
     magicLink({

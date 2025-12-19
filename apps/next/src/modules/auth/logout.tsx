@@ -4,7 +4,7 @@ import { LogOutIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button, ButtonProps } from "@/components/ui/button";
-import { authClient } from "@/lib/auth";
+import { signOut } from "@/lib/actions/auth";
 
 type LogoutProps = {} & ButtonProps;
 
@@ -15,14 +15,12 @@ export default function Logout({ children, disabled, ...props }: LogoutProps) {
   async function handleLogout() {
     try {
       setIsLoading(true);
-      const { error } = await authClient.signOut();
 
-      if (error) {
-        throw new Error(error?.message ?? "Logout failed. Please try again.");
-      }
+      await signOut();
 
       router.refresh();
     } catch (error: unknown) {
+      console.log("error ", error);
       const message =
         error instanceof Error
           ? error?.message
