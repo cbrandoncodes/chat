@@ -4,4 +4,7 @@ import { magicLinkClient } from "better-auth/client/plugins";
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_SERVER_BASE_URL,
   plugins: [magicLinkClient()],
+  fetchOptions: {
+    credentials: "include",
+  },
 });

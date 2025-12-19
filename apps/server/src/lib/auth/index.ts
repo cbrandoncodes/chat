@@ -32,6 +32,21 @@ export const auth = betterAuth({
     },
   },
 
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+    },
+    cookie: {
+      sameSite: "none",
+      secure: true,
+      path: "/",
+    },
+    defaultCookieAttributes: {
+      secure: true,
+      sameSite: "none",
+    },
+  },
+
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, token }) => {
