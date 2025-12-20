@@ -8,7 +8,7 @@ import { BETTER_AUTH_TOKEN } from "@/lib/cookies";
 
 export async function signOut() {
   const { error } = await betterFetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API_URL}/sign-out`,
+    `${process.env.NEXT_PUBLIC_SERVER_API_URL}/me/sign-out`,
     {
       baseURL: process.env.NEXT_PUBLIC_SERVER_BASE_URL,
       headers: await headers(),

@@ -304,8 +304,6 @@ export function useChat({ isBot, userId, chatId, recipientUserId }: Props) {
 
   // connect to websocket
   useEffect(() => {
-    if (isBot) return;
-
     connect();
     return () => disconnect();
   }, [chatId, recipientUserId]);

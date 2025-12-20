@@ -38,18 +38,10 @@ const chatMessagesSlice = createSlice({
       // Check if message already exists to avoid duplicates
       const exists = state.messages[chatId].some((m) => m.id === message.id);
       if (!exists) {
-        const modifiedAt =
-          typeof message.modifiedAt === "string"
-            ? new Date(message.modifiedAt)
-            : message.modifiedAt;
-        const createdAt =
-          typeof message.createdAt === "string"
-            ? new Date(message.createdAt)
-            : message.createdAt;
         state.messages[chatId].push({
           ...message,
-          modifiedAt,
-          createdAt,
+          modifiedAt: new Date(message.modifiedAt),
+          createdAt: new Date(message.createdAt),
         });
       }
     },
@@ -69,18 +61,10 @@ const chatMessagesSlice = createSlice({
           (m) => m.id === message.id
         );
         if (index !== -1) {
-          const modifiedAt =
-            typeof message.modifiedAt === "string"
-              ? new Date(message.modifiedAt)
-              : message.modifiedAt;
-          const createdAt =
-            typeof message.createdAt === "string"
-              ? new Date(message.createdAt)
-              : message.createdAt;
           state.messages[chatId][index] = {
             ...message,
-            modifiedAt,
-            createdAt,
+            modifiedAt: new Date(message.modifiedAt),
+            createdAt: new Date(message.createdAt),
           };
         }
       }

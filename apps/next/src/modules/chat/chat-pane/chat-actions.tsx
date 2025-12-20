@@ -59,7 +59,7 @@ export default function ChatActions({ isBot = false }: ChatActionsProps) {
           >
             <Mic className="size-5" />
           </Button>
-          <div className="relative">
+          <div>
             {isEmojiPickerOpen && (
               <div className="absolute right-0 bottom-full z-50 mb-2">
                 <EmojiPicker

@@ -12,6 +12,7 @@
   "author": "",
   "dependencies": {
     "@aws-sdk/client-ses": "^3.953.0",
+    "@upstash/redis": "^1.35.8",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "socket.io": "^4.8.1"

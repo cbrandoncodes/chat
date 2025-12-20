@@ -42,6 +42,7 @@ export default function ChatList({
           <p className="text-foreground text-xl font-semibold">All Messages</p>
 
           <NewChatDialog
+            userId={userId}
             onSelectUser={(user) => {
               onSelectChat({ recipientId: user.id });
             }}
@@ -61,7 +62,7 @@ export default function ChatList({
         {isLoadingChats ? (
           <ChatListSkeleton />
         ) : chats.length === 0 ? (
-          <ChatsListEmpty onSelectUser={onSelectChat} />
+          <ChatsListEmpty userId={userId} onSelectUser={onSelectChat} />
         ) : (
           <ChatListCore
             userId={userId}

@@ -1,4 +1,3 @@
-import { config } from "dotenv";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { magicLink } from "better-auth/plugins";
@@ -8,10 +7,6 @@ import { render } from "@react-email/render";
 import MagicLinkEmail from "@/components/email-templates/magic-link";
 import { db } from "@/lib/drizzle";
 import { sesClient } from "@/lib/ses";
-
-config({
-  path: ".env",
-});
 
 export const auth = betterAuth({
   baseURL: process.env.BASE_URL as string,

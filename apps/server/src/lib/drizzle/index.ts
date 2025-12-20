@@ -1,13 +1,8 @@
-import { config } from "dotenv";
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { sql } from "drizzle-orm";
 
 import * as schema from "@shared/drizzle/schema";
-
-config({
-  path: ".env",
-});
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

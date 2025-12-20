@@ -38,14 +38,15 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
   return (
     <div className="flex flex-col gap-2 px-4 py-4 lg:px-6">
       <div className="grid w-full grid-cols-[1fr_2.5rem] items-center gap-4 sm:grid-cols-[1fr_auto]">
-        <div className="grid grid-cols-[2.5rem_1fr] items-center gap-2 overflow-hidden lg:gap-3">
-          <ContactInfo
-            user={{
-              email,
-              name,
-              image,
-            }}
-          >
+        <ContactInfo
+          user={{
+            email,
+            name,
+            image,
+            isBot,
+          }}
+        >
+          <div className="grid cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 overflow-hidden lg:gap-3">
             <Button variant="ghost" size="icon" className="size-10">
               {isBot ? (
                 <BotProfileImage />
@@ -53,19 +54,21 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
                 <ProfileImage name={name} image={image ?? undefined} />
               )}
             </Button>
-          </ContactInfo>
-          <div className="flex max-w-[calc(60vw-4.5rem)] flex-col lg:max-w-[calc(40vw-16rem)]">
-            <span className="block truncate text-sm font-semibold">{name}</span>
-            <span
-              className={cn(
-                "text-xs",
-                isOnline ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {isOnline ? "Online" : "Offline"}
-            </span>
+            <div className="flex max-w-[calc(60vw-4.5rem)] flex-col lg:max-w-[calc(40vw-16rem)]">
+              <span className="block truncate text-sm font-semibold">
+                {name}
+              </span>
+              <span
+                className={cn(
+                  "text-xs",
+                  isOnline ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {isOnline ? "Online" : "Offline"}
+              </span>
+            </div>
           </div>
-        </div>
+        </ContactInfo>
 
         {/* Desktop options */}
         <div className="hidden items-center gap-4 lg:flex">

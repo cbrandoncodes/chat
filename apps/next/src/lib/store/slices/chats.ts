@@ -22,10 +22,18 @@ const chatsSlice = createSlice({
     setChats: (state, action: PayloadAction<Chat[]>) => {
       state.chats = action.payload;
     },
-    addChat: (state, action: PayloadAction<Chat>) => {
+    addChat: (
+      state,
+      action: PayloadAction<
+        Omit<Chat, "createdAt"> & { createdAt: Date | string }
+      >
+    ) => {
       const exists = state.chats.some((chat) => chat.id === action.payload.id);
       if (!exists) {
-        state.chats.push(action.payload);
+        state.chats.push({
+          ...action.payload,
+          createdAt: new Date(action.payload.createdAt),
+        });
       }
     },
     updateChat: (

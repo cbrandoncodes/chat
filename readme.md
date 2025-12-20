@@ -1,4 +1,4 @@
-# Realtime Chat Application (Monorepo)
+# Realtime Chat App (Monorepo)
 
 A modern **real‑time chat application** built as a **TypeScript monorepo**, featuring a WebSocket‑powered backend, a Next.js frontend, and a shared database layer powered by Drizzle ORM. The project is designed for scalability, low‑latency messaging, and clean separation of concerns across apps and packages.
 
@@ -93,6 +93,10 @@ TO_EMAIL=
 # Google
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+
+# Redis
+KV_REST_API_URL
+KV_REST_API_TOKEN
 ```
 
 ---

@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ChatInfo from "./chat-info";
+import BotProfileImage from "@/components/bot-profile-image";
 
 type ChatInfoProps = {
   children: React.ReactNode;
@@ -17,11 +18,12 @@ type ChatInfoProps = {
     name: string;
     email: string;
     image?: string | null;
+    isBot?: boolean;
   };
 };
 
 export default function ContactInfo({ children, user }: ChatInfoProps) {
-  const { name, email, image } = user;
+  const { name, email, image, isBot } = user;
 
   return (
     <Dialog>
@@ -35,11 +37,11 @@ export default function ContactInfo({ children, user }: ChatInfoProps) {
 
         <div className="flex flex-col gap-y-6">
           <div className="flex flex-col items-center gap-6">
-            <ProfileImage
-              name={name}
-              image={image ?? undefined}
-              className="size-18"
-            />
+            {isBot ? (
+              <BotProfileImage size={72} />
+            ) : (
+              <ProfileImage size={72} name={name} image={image ?? undefined} />
+            )}
             <div className="flex flex-col items-center gap-2">
               <p className="text-center text-base font-semibold">{name}</p>
               <p className="text-muted-foreground text-center text-sm">

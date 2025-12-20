@@ -21,13 +21,16 @@ import {
 import { SelectUser } from "@shared/drizzle/schema";
 import { getUsersAction } from "@/lib/actions/users";
 import { parseError } from "@/lib/utils";
+import BotProfileImage from "@/components/bot-profile-image";
 
 type NewChatDialogProps = {
   children: React.ReactNode;
+  userId: string;
   onSelectUser?: (user: SelectUser) => void;
 };
 
 export default function NewChatDialog({
+  userId,
   children,
   onSelectUser,
 }: NewChatDialogProps) {
@@ -41,8 +44,9 @@ export default function NewChatDialog({
 
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase())
+      user.id !== userId &&
+      (user.name.toLowerCase().includes(search.toLowerCase()) ||
+        user.email.toLowerCase().includes(search.toLowerCase()))
   );
 
   function handleSelectUser(user: SelectUser) {
@@ -97,7 +101,14 @@ export default function NewChatDialog({
               onClick={() => handleSelectUser(user)}
               className="hover:bg-muted flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors"
             >
-              <ProfileImage name={user.name} image={user.image ?? undefined} />
+              {user?.isBot ? (
+                <BotProfileImage />
+              ) : (
+                <ProfileImage
+                  name={user.name}
+                  image={user.image ?? undefined}
+                />
+              )}
               <span className="text-sm font-medium">{user.name}</span>
             </button>
           ))}
