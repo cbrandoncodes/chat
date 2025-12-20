@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 import ChatList from "./chat-list";
@@ -18,6 +18,7 @@ import {
   addChat,
   setActiveChatId,
   setIsLoading,
+  setIsChatListOpen,
 } from "@/lib/store/slices/chats";
 import { SelectUser } from "@shared/drizzle/schema";
 
@@ -31,9 +32,9 @@ export default function Chat({ user }: ChatProps) {
     chats,
     activeChatId,
     isLoading: isLoadingChats,
+    isChatListOpen,
   } = useAppSelector((state) => state.chats);
   const { users } = useAppSelector((state) => state.users);
-  const [sheetOpen, setSheetOpen] = useState(false);
 
   const activeChat = chats.find((chat) => chat.id === activeChatId);
   const activeChatRecipient =
@@ -70,7 +71,7 @@ export default function Chat({ user }: ChatProps) {
     }
 
     chatId && dispatch(setActiveChatId(chatId));
-    setSheetOpen(false);
+    dispatch(setIsChatListOpen(false));
   }
 
   useEffect(() => {
@@ -122,7 +123,10 @@ export default function Chat({ user }: ChatProps) {
 
       {/* Mobile */}
       <div className="flex w-full flex-col lg:hidden">
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <Sheet
+          open={isChatListOpen}
+          onOpenChange={(isOpen) => dispatch(setIsChatListOpen(isOpen))}
+        >
           <SheetContent
             showCloseButton={false}
             side="left"
