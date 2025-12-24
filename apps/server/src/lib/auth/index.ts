@@ -47,7 +47,27 @@ export const auth = betterAuth({
           },
         },
       }
-    : {}),
+    : {
+        advanced: {
+          crossSubDomainCookies: {
+            enabled: false,
+          },
+          defaultCookieAttributes: {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+          },
+          cookies: {
+            session_token: {
+              attributes: {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: false,
+              },
+            },
+          },
+        },
+      }),
 
   plugins: [
     magicLink({

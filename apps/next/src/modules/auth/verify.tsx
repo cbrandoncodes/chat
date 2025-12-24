@@ -7,8 +7,8 @@ import { Loader2, CheckCircle2, XCircle, ArrowLeftIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/layout/logo";
-import { authClient } from "@/lib/auth";
 import { parseError } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 type Status = "loading" | "success" | "error";
 
@@ -29,15 +29,7 @@ export default function Verify() {
       }
 
       try {
-        const { data, error } = await authClient.magicLink.verify({
-          query: { token },
-        });
-
-        if (error) {
-          setStatus("error");
-          setMessage(error.message ?? "Verification failed");
-          return;
-        }
+        await api.get(`/auth/magic-link/verify?token=${token}`);
 
         setStatus("success");
         setMessage("Verification successful! Redirecting...");

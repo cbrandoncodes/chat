@@ -47,6 +47,10 @@ function ChatEntry({
     ? formatDistanceToNowStrict(lastMessage?.createdAt)
     : undefined;
 
+  if (!recipient) {
+    return null;
+  }
+
   return (
     <>
       <div
@@ -71,13 +75,15 @@ function ChatEntry({
             <BotProfileImage />
           ) : (
             <ProfileImage
-              name={recipient.name}
+              name={recipient?.name ?? "-"}
               image={recipient.image ?? undefined}
             />
           )}
           <div className="flex flex-1 flex-col gap-y-1">
             <div className="flex items-center justify-between gap-1">
-              <span className="text-sm font-medium">{recipient.name}</span>
+              <span className="text-sm font-medium">
+                {recipient?.name ?? "-"}
+              </span>
               <span className="text-muted-foreground text-xs">{timestamp}</span>
             </div>
             <div className="text-muted-foreground flex w-full items-center justify-between gap-1">
