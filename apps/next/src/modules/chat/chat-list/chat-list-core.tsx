@@ -67,8 +67,8 @@ function ChatEntry({
         )}
         <div
           className={cn(
-            "group-hover:bg-muted flex w-full items-center gap-3 rounded-xl p-4 transition-colors duration-300",
-            unread && "bg-muted"
+            "group-hover:bg-muted-background flex w-full items-center gap-3 rounded-xl p-4 transition-colors duration-300",
+            unread && "bg-muted-background"
           )}
         >
           {isBot ? (
@@ -84,10 +84,12 @@ function ChatEntry({
               <span className="text-sm font-medium">
                 {recipient?.name ?? "-"}
               </span>
-              <span className="text-muted-foreground text-xs">{timestamp}</span>
+              <span className="text-muted-foreground text-xs">
+                {timestamp ? `${timestamp} ago` : ""}
+              </span>
             </div>
             <div className="text-muted-foreground flex w-full items-center justify-between gap-1">
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground line-clamp-1 text-xs">
                 {excerpt && excerpt.length >= 1
                   ? truncateString(excerpt, 50)
                   : "No messages yet"}

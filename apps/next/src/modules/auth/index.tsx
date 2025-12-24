@@ -23,11 +23,11 @@ export default function Auth() {
             <CardContent className="space-y-8 text-center sm:px-8">
               <MagicLinkAuth />
               <div className="flex w-full items-center justify-between gap-4 sm:gap-6">
-                <div className="border-t-input-foreground/60 flex-1 border-t" />
+                <div className="border-t-placeholder/60 flex-1 border-t" />
                 <p className="text-muted-foreground min-w-fit flex-1 text-center text-xs font-medium sm:text-sm">
                   OR CONTINUE WITH
                 </p>
-                <div className="border-t-input-foreground/60 flex-1 border-t" />
+                <div className="border-t-placeholder/60 flex-1 border-t" />
               </div>
               <GoogleAuth />
             </CardContent>

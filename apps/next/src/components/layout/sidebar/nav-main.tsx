@@ -7,10 +7,10 @@ import { SidebarMenu, SidebarMenuButton } from "@/components/ui/sidebar";
 import HomeIcon from "@/components/icons/home";
 import FolderIcon from "@/components/icons/folder";
 import ImagesSquareIcon from "@/components/icons/images-square";
-import MessageIcon from "@/components/icons/message";
 import CompassIcon from "@/components/icons/compass";
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/types/nav";
+import { MessageCircleIcon } from "lucide-react";
 
 export const navItems: NavItem[] = [
   {
@@ -21,7 +21,7 @@ export const navItems: NavItem[] = [
   {
     label: "Chat",
     href: "/app/chat",
-    icon: MessageIcon,
+    icon: MessageCircleIcon,
   },
   {
     label: "History",
@@ -53,9 +53,9 @@ export function NavMain() {
             <SidebarMenuButton
               className={cn(
                 "mx-auto flex h-11 w-11 items-center justify-center gap-4 rounded-xl border border-transparent transition-colors",
-                "hover:text-foreground hover:bg-accent-background",
+                "hover:text-foreground-icon-alt hover:bg-accent-background",
                 isActive
-                  ? "border-primary bg-accent-background! active:text-foreground"
+                  ? "border-primary bg-accent-background! active:text-foreground-icon-alt"
                   : "border-transparent bg-transparent"
               )}
               isActive={pathname === href}
@@ -63,7 +63,7 @@ export function NavMain() {
               asChild
             >
               <Link href={href}>
-                <span className="text-foreground [&>svg]:size-5">
+                <span className="text-foreground-icon-alt [&>svg]:size-5">
                   {Icon && <Icon className="size-5" />}
                 </span>
               </Link>

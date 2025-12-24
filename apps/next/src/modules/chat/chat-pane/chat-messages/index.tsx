@@ -100,10 +100,8 @@ function MessageBubble({
   return (
     <div
       className={cn(
-        "max-w-xs rounded-xl p-3 text-sm whitespace-pre-wrap",
-        isSent
-          ? "bg-primary-foreground-alt text-foreground"
-          : "bg-background text-foreground"
+        "text-text-primary max-w-xs rounded-xl p-3 text-sm whitespace-pre-wrap",
+        isSent ? "bg-primary-foreground-alt" : "bg-background"
       )}
     >
       {message.content}
@@ -162,7 +160,7 @@ function MessageGroupComponent({
 function DateSeparator({ label }: { label: string }) {
   return (
     <div className="sticky top-0 z-10 flex justify-center py-4">
-      <span className="bg-background text-muted-foreground rounded-full px-4 py-1 text-xs font-medium shadow-sm">
+      <span className="bg-background text-muted-foreground-alt min-w-[65px] rounded-full px-3 py-1 text-sm font-medium shadow-xs">
         {label}
       </span>
     </div>

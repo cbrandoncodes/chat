@@ -75,7 +75,7 @@ function ChatPaneContent({
         sendMessageToBot,
       }}
     >
-      <div className="bg-background flex h-full flex-col rounded-3xl shadow-sm">
+      <div className="bg-background flex h-full flex-col rounded-3xl shadow-xs">
         <ChatHeader user={recipient} />
         <ChatMessages markChatAsRead={markChatAsRead} />
         <ChatActions isBot={isBot} />

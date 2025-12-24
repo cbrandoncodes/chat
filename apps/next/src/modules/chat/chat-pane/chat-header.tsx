@@ -46,7 +46,7 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
             isBot,
           }}
         >
-          <div className="grid cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 overflow-hidden lg:gap-3">
+          <div className="grid w-fit cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 overflow-hidden lg:gap-3">
             <Button variant="ghost" size="icon" className="size-10">
               {isBot ? (
                 <BotProfileImage />
@@ -73,8 +73,13 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
         {/* Desktop options */}
         <div className="hidden items-center gap-4 lg:flex">
           {chatOptions.map(({ icon: Icon, label }) => (
-            <Button key={label} variant="outline" size="icon">
-              <Icon className="size-4" />
+            <Button
+              key={label}
+              variant="outline"
+              size="icon"
+              className="size-8"
+            >
+              <Icon className="text-foreground-icon size-3 [&_path]:stroke-[1.5px]" />
             </Button>
           ))}
         </div>
@@ -83,8 +88,12 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
         <div className="lg:hidden">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon" className="min-w-10 flex-1">
-                <MoreHorizontalIcon className="size-4" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-8 min-w-8 flex-1"
+              >
+                <MoreHorizontalIcon className="text-foreground-icon size-3 [&_path]:stroke-[1.5px]" />
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-48 p-2">
@@ -95,7 +104,7 @@ export default function ChatHeader({ user }: ChatHeaderProps) {
                     variant="ghost"
                     className="h-auto justify-start gap-3 px-3 py-2"
                   >
-                    <Icon className="size-4" />
+                    <Icon className="text-foreground-icon size-3 [&_path]:stroke-[1.5px]" />
                     <span className="text-sm">{label}</span>
                   </Button>
                 ))}

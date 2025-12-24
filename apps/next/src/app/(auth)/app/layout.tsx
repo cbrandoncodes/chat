@@ -4,12 +4,12 @@ import { redirect } from "next/navigation";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
-import { SiteHeader } from "@/components/layout/header";
+import { SiteHeader } from "@/components/layout/site-header";
 import PageMessage from "@/components/page-message";
 import { UserProfileDialog } from "@/components/user-profile-dialog";
-import { authCheck } from "@/lib/utils/auth";
 import { getUser } from "@shared/drizzle/queries/users";
 import { SelectUser } from "@shared/drizzle/schema";
+import { authCheck } from "@/lib/utils/auth";
 
 export default async function AppLayout({
   children,
@@ -50,7 +50,7 @@ export default async function AppLayout({
           defaultOpen={defaultOpen}
           style={
             {
-              "--sidebar-width": "calc(var(--sidebar-spacing) * 24)",
+              "--sidebar-width": "calc(var(--sidebar-spacing) * 19)",
               "--header-height": "calc(var(--spacing) * 14)",
             } as React.CSSProperties
           }
@@ -60,7 +60,7 @@ export default async function AppLayout({
           <SidebarInset className="bg-muted-background">
             <SiteHeader user={user} />
             <div className="flex flex-1 flex-col">
-              <div className="@container/main h-full px-2 pt-2 pb-4 sm:px-4 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
+              <div className="@container/main h-full px-2 py-2 sm:px-3 sm:py-3 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
                 {children}
               </div>
             </div>

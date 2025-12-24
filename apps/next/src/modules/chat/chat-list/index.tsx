@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import PencilPlusIcon from "@/components/icons/pencil-plus";
 import ChatListFilter from "./chat-list-filter";
@@ -5,9 +7,9 @@ import ChatListSearch from "./chat-list-search";
 import ChatListCore from "./chat-list-core";
 import ChatsListEmpty from "./chat-list-empty";
 import ChatListSkeleton from "./chat-list-skeleton";
-import NewChatDialog from "@/modules/chat/new-chat-dialog";
-import { Chat } from "@/types/chat";
+import NewChatPopup from "@/modules/chat/new-chat-popup";
 import { cn } from "@/lib/utils";
+import { Chat } from "@/types/chat";
 
 type Props = {
   isLoadingChats?: boolean;
@@ -30,10 +32,11 @@ export default function ChatList({
   chats,
   className,
 }: Props) {
+  const [isNewChatPopupOpen, setIsNewChatPopupOpen] = useState(false);
   return (
     <div
       className={cn(
-        "bg-background h-auto w-full p-6 lg:rounded-3xl lg:shadow-sm",
+        "bg-background h-auto w-full p-6 lg:rounded-3xl lg:shadow-xs",
         className
       )}
     >
@@ -41,20 +44,23 @@ export default function ChatList({
         <div className="flex items-center justify-between">
           <p className="text-foreground text-xl font-semibold">All Messages</p>
 
-          <NewChatDialog
-            userId={userId}
-            onSelectUser={(user) => {
-              onSelectChat({ recipientId: user.id });
-            }}
-          >
-            <Button>
+          <div className="relative">
+            <Button size="sm" onClick={() => setIsNewChatPopupOpen(true)}>
               <PencilPlusIcon />
               New Message
             </Button>
-          </NewChatDialog>
+            <NewChatPopup
+              open={isNewChatPopupOpen}
+              onOpenChange={setIsNewChatPopupOpen}
+              userId={userId}
+              onSelectUser={(user) => {
+                onSelectChat({ recipientId: user.id });
+              }}
+            />
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex h-10 items-stretch gap-4">
           <ChatListSearch />
           <ChatListFilter />
         </div>

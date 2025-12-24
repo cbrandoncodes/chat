@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import ContactInfo from "./chat-pane/contact-info";
 import {
   clearChatAction,
   deleteChatAction,
@@ -27,7 +28,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { removeChat, updateChat } from "@/lib/store/slices/chats";
 import { clearMessages } from "@/lib/store/slices/chat-messages";
-import ContactInfo from "./chat-pane/contact-info";
 import { SelectUser } from "@shared/drizzle/schema";
 
 type ChatMenuProps = {
@@ -107,12 +107,12 @@ export default function ChatMenu({
         side="bottom"
         align="end"
         sideOffset={8}
-        className="w-64 rounded-2xl p-3"
+        className="w-[200px] gap-1 rounded-2xl p-2"
       >
         <div className="flex flex-col gap-1">
           <Button
             variant="ghost"
-            className="hover:bg-muted h-auto justify-start gap-3 rounded-xl px-3 py-3"
+            className="h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
             onClick={handleMarkAsUnread}
           >
             <MessageCircle className="size-5" />
@@ -121,7 +121,7 @@ export default function ChatMenu({
 
           <Button
             variant="ghost"
-            className="h-auto justify-start gap-3 rounded-xl px-3 py-3"
+            className="h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
           >
             <Archive className="size-5" />
             <span className="text-sm font-medium">Archive</span>
@@ -129,9 +129,9 @@ export default function ChatMenu({
 
           <Button
             variant="ghost"
-            className="h-auto justify-between gap-3 rounded-xl px-3 py-3"
+            className="h-auto justify-between gap-2.5 rounded-lg px-2 py-1.5"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <VolumeX className="size-5" />
               <span className="text-sm font-medium">Mute</span>
             </div>
@@ -141,7 +141,7 @@ export default function ChatMenu({
           <ContactInfo user={recipient}>
             <Button
               variant="ghost"
-              className="h-auto justify-start gap-3 rounded-xl px-3 py-3"
+              className="h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
             >
               <User className="size-5" />
               <span className="text-sm font-medium">Contact info</span>
@@ -150,7 +150,7 @@ export default function ChatMenu({
 
           <Button
             variant="ghost"
-            className="h-auto justify-start gap-3 rounded-xl px-3 py-3"
+            className="h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
           >
             <Upload className="size-5" />
             <span className="text-sm font-medium">Export chat</span>
@@ -159,7 +159,7 @@ export default function ChatMenu({
           <Button
             variant="ghost"
             disabled={isClearing}
-            className="h-auto justify-start gap-3 rounded-xl px-3 py-3"
+            className="h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
             onClick={handleClearChat}
           >
             <X className="size-5" />
@@ -169,7 +169,7 @@ export default function ChatMenu({
           <Button
             variant="ghost"
             disabled={isDeleting}
-            className="text-destructive hover:text-destructive h-auto justify-start gap-3 rounded-xl px-3 py-3"
+            className="text-destructive hover:text-destructive h-auto justify-start gap-2.5 rounded-lg px-2 py-1.5"
             onClick={handleDeleteChat}
           >
             <Trash2 className="size-5" />

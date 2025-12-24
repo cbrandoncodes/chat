@@ -1,6 +1,5 @@
-import { SearchIcon } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
+import SearchIcon from "@/components/icons/search";
 
 export default function ChatListSearch() {
   return (
@@ -8,7 +7,8 @@ export default function ChatListSearch() {
       <Input
         placeholder="Search in message"
         icon={SearchIcon}
-        className="bg-background h-10"
+        className="bg-background placeholder:text-text-secondary h-10 text-sm"
+        iconClassName="text-text-secondary"
       />
     </div>
   );

@@ -23,7 +23,12 @@ export default function ProfileImage({
     >
       <AvatarImage src={image} alt={name} />
       <AvatarFallback className="rounded-lg">
-        <BoringAvatar size={size} name={name} variant="bauhaus" />
+        <BoringAvatar
+          size={size}
+          name={name}
+          variant="bauhaus"
+          style={{ width: size, height: size }}
+        />
       </AvatarFallback>
     </Avatar>
   );

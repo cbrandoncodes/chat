@@ -52,11 +52,11 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         <ScrollArea>
           <NavMain />
         </ScrollArea>
-        <div className="bg-sidebar flex flex-col items-center gap-y-8 py-6">
-          <span className="text-foreground">
-            <StarFourIcon className="size-5" />
+        <div className="bg-sidebar flex flex-col items-center gap-y-6 py-6">
+          <span className="text-foreground inline-flex size-11 items-center justify-center">
+            <StarFourIcon className="size-4.5" />
           </span>
-          <ProfileImage name="John Doe" />
+          <ProfileImage name="John Doe" size={44} />
         </div>
       </SidebarContent>
     </Sidebar>

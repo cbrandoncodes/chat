@@ -104,9 +104,9 @@ export default function Chat({ user }: ChatProps) {
   }, [dispatch, user.id]);
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-height)-2rem)] w-full items-stretch">
+    <div className="flex h-[calc(100vh-var(--header-height)-1.5rem)] w-full items-stretch sm:h-[calc(100vh-var(--header-height)-2.25rem)]">
       {/* Desktop */}
-      <div className="hidden w-full grid-cols-[0.45fr_0.55fr] grid-rows-1 gap-4 lg:grid xl:grid-cols-[0.35fr_0.65fr]">
+      <div className="hidden w-full grid-cols-[0.35fr_0.65fr] grid-rows-1 gap-2 sm:gap-3 lg:grid xl:grid-cols-[400px_1fr]">
         <ChatList
           isLoadingChats={isLoadingChats}
           userId={user.id}
