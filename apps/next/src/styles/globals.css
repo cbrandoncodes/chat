@@ -71,7 +71,7 @@
   --radius: 0.5rem;
   --tracking-normal: 0em;
   --letter-spacing: 0em;
-  --sidebar-spacing: 0.225rem;
+  --sidebar-spacing: 0.2rem;
   --spacing: 0.25rem;
 
   --background: 210 40% 98%;
@@ -154,6 +154,8 @@
   --text-8xl: 3.5rem;
 
   @media (min-width: 768px) {
+    --sidebar-spacing: 0.225rem;
+
     --text-xs: 0.75rem;
     --text-sm: 0.875rem;
     --text-base: 1rem;

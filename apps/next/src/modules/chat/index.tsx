@@ -50,7 +50,7 @@ export default function Chat({ user }: ChatProps) {
   }) {
     if (recipientId) {
       const existingChat = chats.find(
-        (chat) => chat.recipient.id === recipientId
+        (chat) => chat?.recipient?.id === recipientId
       );
 
       if (existingChat) {
